@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Route Optimization with Map</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      color: #fff;
+      background: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    #map {
+      height: 400px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+    .result {
+      margin-top: 20px;
+      background: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+  
+  <script>
+    async function loadGoogleMapsAPI() {
+      const response = await fetch('/api/key');
+      const data = await response.json();
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${data.apiKey}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  
+    loadGoogleMapsAPI();
+  </script>
+
+</head>
+<body>
+  <div class="container">
+    <h1>Route Optimization</h1>
+    <div id="address-inputs">
+      <div class="input-group">
+        <label for="address1">Address 1</label>
+        <input type="text" id="address1" placeholder="Enter an address">
+      </div>
+    </div>
+    <button class="btn" id="add-address">Add Address</button>
+    <button class="btn" id="calculate-route">Optimize Route</button>
+    <div id="result" class="result" style="display: none;">
+      <h2>Optimized Route</h2>
+      <p id="route"></p>
+      <p id="distance"></p>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <script>
+    let addresses = [];
+    let addressCount = 1;
+    let map;
+    let directionsService;
+    let directionsRenderer;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 37.7749, lng: -122.4194 }, // Default to San Francisco
+        zoom: 13,
+      });
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(map);
+    }
+
+    // Add more address fields
+    document.getElementById('add-address').addEventListener('click', () => {
+      addressCount++;
+      const inputGroup = document.createElement('div');
+      inputGroup.className = 'input-group';
+      inputGroup.innerHTML = `
+        <label for="address${addressCount}">Address ${addressCount}</label>
+        <input type="text" id="address${addressCount}" placeholder="Enter an address">
+      `;
+      document.getElementById('address-inputs').appendChild(inputGroup);
+    });
+
+    // Calculate and display optimized route
+    document.getElementById('calculate-route').addEventListener('click', async () => {
+      addresses = [];
+      for (let i = 1; i <= addressCount; i++) {
+        const address = document.getElementById(`address${i}`).value.trim();
+        if (address) addresses.push(address);
+      }
+
+      if (addresses.length === 0) {
+        alert('Please enter at least one address.');
+        return;
+      }
+
+      try {
+        const result = await optimizeAndDisplayRoute(addresses);
+        document.getElementById('route').textContent = `Route: ${result.route.join(' → ')}`;
+        document.getElementById('distance').textContent = `Total Distance: ${result.totalDistance} km`;
+        document.getElementById('result').style.display = 'block';
+      } catch (error) {
+        alert('Failed to calculate the route. Please check your addresses and try again.');
+      }
+    });
+
+    async function optimizeAndDisplayRoute(addresses) {
+      const waypoints = addresses.slice(1, -1).map((address) => ({ location: address, stopover: true }));
+
+      const request = {
+        origin: addresses[0],
+        destination: addresses[addresses.length - 1],
+        waypoints: waypoints,
+        travelMode: google.maps.TravelMode.DRIVING,
+        optimizeWaypoints: true,
+      };
+
+      return new Promise((resolve, reject) => {
+        directionsService.route(request, (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setDirections(result);
+
+            const route = result.routes[0].legs.map((leg) => leg.start_address);
+            route.push(result.routes[0].legs[result.routes[0].legs.length - 1].end_address);
+
+            const totalDistance = result.routes[0].legs.reduce((sum, leg) => sum + leg.distance.value, 0) / 1000;
+
+            resolve({ route, totalDistance });
+          } else {
+            reject(new Error('Directions request failed due to ' + status));
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
