@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import requests
 import json
 import urllib
@@ -5,11 +7,26 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
 
+######################## Load APIs ########################
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the Google Maps API key
+google_maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+
+if google_maps_api_key:
+    print("Google Maps API Key loaded successfully.")
+else:
+    print("Error: Google Maps API Key is missing.")
+
+
+######################## Create test data ########################
 
 def create_data():
    """Creates a small test data."""
    data = {}
-   data['API_key'] = 'Google_API_key'
+   data['API_key'] = google_maps_api_key
    data['addresses'] = ['3610+Hacks+Cross+Rd+Memphis+TN', # start location
                        '1921+Elvis+Presley+Blvd+Memphis+TN',
                        '149+Union+Avenue+Memphis+TN'
@@ -94,23 +111,53 @@ def create_data_model(distance_matrix, number_vehicles=2):
 ######################## Print Route Optimization results ###########################
 
 def print_solution(manager, routing, solution):
-    """Print the solution for the route optimization."""
+    """Prints the solution on the console."""
+    # Create a dictionary to save the path
+    route = dict()
+    route['vehicles'] = list()
+
     print('Objective: {}'.format(solution.ObjectiveValue()))
     total_distance = 0
     for vehicle_id in range(manager.GetNumberOfVehicles()):
         index = routing.Start(vehicle_id)
         plan_output = f'Route for vehicle {vehicle_id}:\n'
+
+        # Create a dictionary for each vehicle route
+        vehicle_route = dict()
+        vehicle_route['id'] = vehicle_id
+
+        # Create a list of all stops
+        stops = list()
+
         route_distance = 0
         while not routing.IsEnd(index):
             plan_output += f' {manager.IndexToNode(index)} ->'
             previous_index = index
+
+            # Save all stops location
+            stops.append(manager.IndexToNode(index))
+
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(previous_index, index, vehicle_id)
+
         plan_output += f' {manager.IndexToNode(index)}\n'
         plan_output += f'Distance of the route: {route_distance} units\n'
+
+        # Save the information of vehicle route
+        stops.append(manager.IndexToNode(index))
+        vehicle_route['route'] = stops
+        vehicle_route['distance'] = route_distance
+
+        route['vehicles'].append(vehicle_route)
+
+        # print the information
         print(plan_output)
         total_distance += route_distance
+
     print(f'Total distance of all routes: {total_distance} units')
+    route['distance'] = total_distance
+
+    return route
 
 
 ######################## Create Route Optimization model ###########################
@@ -167,6 +214,7 @@ def route_optimization_model(data=None):
     
     # Print solution
     if solution:
-        print_solution(manager, routing, solution)
+        route = print_solution(manager, routing, solution)
+        return route
     else:
         print("No solution found!")
