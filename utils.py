@@ -32,3 +32,36 @@ def encode_categorical_data(column_names, data):
        data[column_names] = label_encoder.fit_transform(data[column_names])
     return data
 
+
+def print_scatterplot_with_regression_line(x, y):
+    """Print a scatterplot with regression line."""
+    # Create a scatterplot
+    plt.scatter(x, y, color='blue')
+    
+    # Fit a regression line
+    m, b = np.polyfit(x, y, 1)
+    
+    # Plot the regression line
+    plt.plot(x, m * x + b, color='red')
+    
+    # Add labels and title
+    plt.xlabel(x)
+    plt.ylabel(y)
+    plt.title(f'Scatterplot of {x} vs {y}')
+    
+    # Show the plot
+    plt.show()
+
+
+def print_histplot(data):
+    """Print a histogram plot."""
+    # Create a histogram
+    plt.hist(data, bins=20, color='blue')
+    
+    # Add labels and title
+    plt.ylabel('Frequency')
+    # plt.title(f'Histogram of {data}')
+    
+    # Show the plot
+    plt.show()
+
