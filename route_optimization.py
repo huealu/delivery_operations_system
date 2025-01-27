@@ -23,7 +23,7 @@ else:
 
 ######################## Create test data ########################
 
-def create_data():
+def create_mock_data():
    """Creates a small test data."""
    data = {}
    data['API_key'] = google_maps_api_key
@@ -31,6 +31,14 @@ def create_data():
                        '1921+Elvis+Presley+Blvd+Memphis+TN',
                        '149+Union+Avenue+Memphis+TN'
                       ]
+   return data
+
+
+def create_data(addresses):
+   """Pack a dictionary of data."""
+   data = {}
+   data['API_key'] = google_maps_api_key
+   data['addresses'] = addresses
    return data
 
 
@@ -162,17 +170,22 @@ def print_solution(manager, routing, solution):
 
 ######################## Create Route Optimization model ###########################
 
-def route_optimization_model(data=None):
+def route_optimization_model(addresses=None):
     """Solves the Vehicle Routing Problem."""
 
     ################ Create data #################
+    if addresses is None:
+        # Use test data 
+        data = create_mock_data()
+    else:
+        # Use user provided data 
+        data = create_data(addresses)
+
     # Create distance matrix 
     if isinstance(data, dict):
         distance_matrix = create_distance_matrix(data)
     else:
-        # Use test data 
-        data = create_data()
-        distance_matrix = create_distance_matrix(data)
+        print("Error: Invalid data format!")
     
     print(distance_matrix) # Print distance matrix 
 
