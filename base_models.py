@@ -81,7 +81,7 @@ def print_feature_importance_plot(model, X_train):
     # Show the plot
     plt.show()
     """
-    print("Feature importance plot is not implemented yet.")
+    print("Feature importance plot is not implemented yet due to the lightGBM package issue when installing the package.")
 
 
 def MLP_model(X_train, y_train):
@@ -111,3 +111,4 @@ def print_model_results(model, X_train, y_train, X_test, y_test):
     # Print the results
     print("MSE:", np.mean((y_pred_test - y_test) ** 2))
     print("RMSE:", np.sqrt(np.mean((y_pred_test - y_test) ** 2)))
+    print("Accuracy:", model.score(X_test, y_test))
