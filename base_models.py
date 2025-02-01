@@ -1,24 +1,27 @@
 import numpy as np
-import lightgbm as lgbm
 import matplotlib.pyplot as plt
 
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from lightgbm import LGBMRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import root_mean_squared_error
+from sklearn.model_selection import GridSearchCV
 
 import time
 
+# import lightgbm as lgbm
+# from lightgbm import LGBMRegressor
 
-def grid_search_model(model, X_train, y_train):
+
+def grid_search_model(X_train, y_train, model=None):
     """Perform grid search to find the best model."""
     # Create a list of models
     models = [LinearRegression(), 
               DecisionTreeRegressor(), 
-              RandomForestRegressor(), 
-              LGBMRegressor()]
+              RandomForestRegressor()
+              # LGBMRegressor()
+              ]
     
     # Create a list of parameters for grid search
     params = [{}, 
@@ -44,6 +47,7 @@ def grid_search_model(model, X_train, y_train):
 
 def LGBM_model(X_train, y_train):
     """Train the model using LightGBM."""
+    """
     # Create the model
     model = LGBMRegressor(learning_rate=0.1, 
                           max_depth=7, 
@@ -53,10 +57,14 @@ def LGBM_model(X_train, y_train):
     # Train the model
     model.fit(X_train, y_train)
     return model
+    """
+    print("LGBM model is not implemented yet.")
 
 
 def print_feature_importance_plot(model, X_train):
     """Print a feature importance plot."""
+
+    """
     # Get the feature importances
     # Plot feature importance using Gain
     lgbm.plot_importance(model, importance_type="gain", figsize=(7,6), title="LightGBM Feature Importance (Gain)")
@@ -65,13 +73,15 @@ def print_feature_importance_plot(model, X_train):
     lgbm.plot_importance(model, importance_type="split", figsize=(7,6), title="LightGBM Feature Importance (Split)")
 
     # Plot feature importance 
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle('Horizontally stacked subplots')
-    ax1 = lgbm.plot_importance(model, importance_type="gain", figsize=(7,6), title="LightGBM Feature Importance (Gain)")
-    ax2 = lgbm.plot_importance(model, importance_type="split", figsize=(7,6), title="LightGBM Feature Importance (Split)")
+    # fig, (ax1, ax2) = plt.subplots(1, 2)
+    # fig.suptitle('Horizontally stacked subplots')
+    # ax1 = lgbm.plot_importance(model, importance_type="gain", figsize=(7,6), title="LightGBM Feature Importance (Gain)")
+    # ax2 = lgbm.plot_importance(model, importance_type="split", figsize=(7,6), title="LightGBM Feature Importance (Split)")
     
     # Show the plot
     plt.show()
+    """
+    print("Feature importance plot is not implemented yet.")
 
 
 def MLP_model(X_train, y_train):
