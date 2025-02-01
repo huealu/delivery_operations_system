@@ -13,9 +13,9 @@ from sklearn.preprocessing import LabelEncoder
 
 
 
-def load_data():
+def load_data(file_path):
     """Load the data from the CSV file."""
-    data = pd.read_csv('data.csv')
+    data = pd.read_csv(file_path)
     return data
 
 
@@ -36,7 +36,7 @@ def encode_categorical_data(column_names, data):
 def print_scatterplot_with_regression_line(x, y):
     """Print a scatterplot with regression line."""
     # Create a scatterplot
-    plt.scatter(x, y, color='blue')
+    plt.scatter(x, y)
     
     # Fit a regression line
     m, b = np.polyfit(x, y, 1)
@@ -45,9 +45,9 @@ def print_scatterplot_with_regression_line(x, y):
     plt.plot(x, m * x + b, color='red')
     
     # Add labels and title
-    plt.xlabel(x)
-    plt.ylabel(y)
-    plt.title(f'Scatterplot of {x} vs {y}')
+    plt.xlabel('y_test')
+    plt.ylabel('y_pred_test')
+    plt.title('Scatterplot of y_test vs y_pred_test')
     
     # Show the plot
     plt.show()
@@ -56,11 +56,11 @@ def print_scatterplot_with_regression_line(x, y):
 def print_histplot(data):
     """Print a histogram plot."""
     # Create a histogram
-    plt.hist(data, bins=20, color='blue')
+    sns.histplot(data)
     
     # Add labels and title
     plt.ylabel('Frequency')
-    # plt.title(f'Histogram of {data}')
+    plt.title(f'Histogram of {data.columns[0]} and {data.columns[1]}')
     
     # Show the plot
     plt.show()

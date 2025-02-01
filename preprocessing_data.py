@@ -1,16 +1,13 @@
 # Import packages
-
 import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 from geopy.distance import geodesic
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
-
 
 
 
@@ -67,6 +64,45 @@ def calculate_distance(data):
     return data
 
 
+def categorize_data(data):
+    """Categorize the data"""
+    # Categorize the data
+    data['Type_of_vehicle'] = pd.Categorical(data['Type_of_vehicle'])
+    data['multiple_deliveries'] = pd.Categorical(data['multiple_deliveries'])
+    data['Festival'] = pd.Categorical(data['Festival'])
+    data['City'] = pd.Categorical(data['City'])
+    data['weather_condition'] = pd.Categorical(data['weather_condition'])
+    data['traffic_density'] = pd.Categorical(data['traffic_density'])
+    data['Vehicle_condition'] = pd.Categorical(data['Vehicle_condition'])
+    data['day_of_week'] = pd.Categorical(data['day_of_week'])
+    return data
+
+
+def categorize_datatype_by_dummies(column_names, data):
+    """Categorize datatype to category"""
+    if isinstance(column_names, list):
+        for col in column_names:
+            # Convert datatype to category
+            data[col] = data[col].astype('str')
+    else:
+        data[column_names] = data[column_names].astype('str')
+    df = pd.get_dummies(data, drop_first=True)
+    return df
+
+
+
+def categorize_datatype(column_names, data):
+    """Categorize datatype to category"""
+    if isinstance(column_names, list):
+        for col in column_names:
+            # Convert datatype to category
+            data[col] = data[col].astype('category')
+    else:
+        data[column_names] = data[column_names].astype('category')
+
+    return data
+
+
 def preprocess_data(data):
     """Preprocess the data"""
     # Clean the data
@@ -83,9 +119,47 @@ def preprocess_data(data):
 
     # Calculate the distance
     data = calculate_distance(data)
-
-    # Create data for traing and test
-    X = data[['Type_of_vehicle', 'multiple_deliveries', 'Festival', 'City', 'weather_condition', 'traffic_density', 'Vehicle_condition', 'day_of_week', 'distance']]
-    Y = data['delivery_time']
     
     return data
+
+
+def run_preprocessing_data(data, scaler=False):
+    """Run preprocessing data"""
+    # Preprocess the data
+    data = preprocess_data(data)
+
+    # Create data for traing and test
+    X = data[['Type_of_vehicle', 
+              'multiple_deliveries', 
+              'Festival', 'City', 
+              'weather_condition', 
+              'traffic_density', 
+              'Vehicle_condition', 
+              'day_of_week', 
+              'distance']]
+    Y = data['delivery_time']
+
+    # Categorize the data
+    # data = categorize_data(data)
+
+    if scaler:
+        # Categorize the datatype by dummies
+        X = categorize_datatype_by_dummies(['Type_of_vehicle', 
+                                               'multiple_deliveries', 
+                                               'Festival', 'City', 
+                                               'weather_condition', 
+                                               'traffic_density', 
+                                               'Vehicle_condition', 
+                                               'day_of_week'], X)
+    else:
+        # Categorize the datatype
+        X = categorize_datatype(['Type_of_vehicle', 
+                                 'multiple_deliveries', 
+                                 'Festival', 'City', 
+                                 'weather_condition', 
+                                 'traffic_density', 
+                                 'Vehicle_condition', 
+                                 'day_of_week'], X)
+
+    
+    return data, X, Y
