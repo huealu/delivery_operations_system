@@ -168,6 +168,26 @@ def print_solution(manager, routing, solution):
     return route
 
 
+def encode_address(address, route):
+    """Encode the address."""
+    # Create a list of all stops addresses
+    vehicles_route_address = list()
+    for vehicle in route['vehicles']:
+        # Create a list of all stops addresses for a vehicle
+        stop_adresses = list()
+
+        for stop in vehicle['route']:
+            stop_adresses.append(address[stop])
+        
+        print(f"Vehicle {vehicle['id']} route: {stop_adresses}")
+
+        # save the address of each vehicle route into vehicles_route_address
+        vehicles_route_address.append(stop_adresses)
+    
+    return vehicles_route_address
+   
+
+
 ######################## Create Route Optimization model ###########################
 
 def route_optimization_model(addresses=None):
@@ -231,3 +251,17 @@ def route_optimization_model(addresses=None):
         return route
     else:
         print("No solution found!")
+
+
+if __name__ == "__main__":
+    addresses = ['3610+Hacks+Cross+Rd+Memphis+TN', # depot
+                     '1921+Elvis+Presley+Blvd+Memphis+TN',
+                     '149+Union+Avenue+Memphis+TN',
+                     '1034+Audubon+Drive+Memphis+TN',
+                     '1532+Madison+Ave+Memphis+TN',
+                     '706+Union+Ave+Memphis+TN',
+                     '3641+Central+Ave+Memphis+TN',
+                     '926+E+McLemore+Ave+Memphis+TN']
+    route = route_optimization_model(addresses)
+    
+    vehicles_route_address = encode_address(addresses, route)
