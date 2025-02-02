@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 from preprocessing_data import run_preprocessing_data, preprocess_data, categorize_datatype, categorize_datatype_by_dummies
 import utils
 import base_models
+import dl_model
 
 
 def run_model(train= True, mode='MLP', scaler=False):
@@ -85,6 +86,8 @@ def run_model(train= True, mode='MLP', scaler=False):
 
             # Print model results
             base_models. print_model_results(model, X_train, y_train, X_test, y_test)
+        elif mode == 'DL':
+            return dl_model.run_dl_model()
         
         # Predict the test data
         y_pred_test = model.predict(X_test)
@@ -108,5 +111,9 @@ def run_model(train= True, mode='MLP', scaler=False):
 
 
 if __name__ == "__main__":
+    """
+    For the deep learning model, scaler = True, mode = 'DL'
+    For the base models, scaler = False, mode = 'MLP'
+    """
     run_model(train=True, mode='MLP', scaler=False)
 
