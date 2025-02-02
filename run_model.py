@@ -87,7 +87,7 @@ def run_model(train= True, mode='MLP', scaler=False):
             # Print model results
             base_models. print_model_results(model, X_train, y_train, X_test, y_test)
         elif mode == 'DL':
-            return dl_model.run_dl_model()
+            return dl_model.run_dl_model(train)
         
         # Predict the test data
         y_pred_test = model.predict(X_test)

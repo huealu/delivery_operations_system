@@ -34,7 +34,7 @@ def evaluate_model(model, X_test, y_test):
     return loss, mae
 
 
-def run_dl_model():
+def run_dl_model(train=True):
     """Run the deep learning model."""
     # Load the data
     data = utils.load_data('./data/train.csv')
@@ -72,8 +72,11 @@ def run_dl_model():
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
-    # Create the model
-    model = create_model(X_train.shape[1])
+    if train:
+        # Create the model
+        model = create_model(X_train.shape[1])
+    else:
+        model = tf.keras.models.load_model('DL_model.h5')
 
     model.summary()
 
@@ -100,8 +103,11 @@ def run_dl_model():
     print('Print scatterplot with regression line')
     utils.print_scatterplot_with_regression_line(y_test, y_pred_test)
 
+    # Save the model
+    model.save('DL_model.h5')
+
     return model
 
 
 if __name__ == "__main__":
-    run_dl_model()
+    run_dl_model(train=True)
