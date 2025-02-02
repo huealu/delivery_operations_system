@@ -184,7 +184,7 @@ def encode_address(address, route):
         # save the address of each vehicle route into vehicles_route_address
         vehicles_route_address.append(stop_adresses)
     
-    return vehicles_route_address
+    return vehicles_route_address, route['distance']
    
 
 
@@ -251,9 +251,9 @@ def route_optimization_model(addresses=None):
         route = print_solution(manager, routing, solution)
 
         # decode the address
-        vehicles_route_address = encode_address(addresses, route)
+        vehicles_route_address, total_distance = encode_address(addresses, route)
 
-        return vehicles_route_address
+        return vehicles_route_address, total_distance
     else:
         print("No solution found!")
 
