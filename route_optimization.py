@@ -197,6 +197,7 @@ def route_optimization_model(addresses=None):
     if addresses is None:
         # Use test data 
         data = create_mock_data()
+        addresses = data['addresses']
     else:
         # Use user provided data 
         data = create_data(addresses)
@@ -248,7 +249,11 @@ def route_optimization_model(addresses=None):
     # Print solution
     if solution:
         route = print_solution(manager, routing, solution)
-        return route
+
+        # decode the address
+        vehicles_route_address = encode_address(addresses, route)
+
+        return vehicles_route_address
     else:
         print("No solution found!")
 
@@ -263,5 +268,4 @@ if __name__ == "__main__":
                      '3641+Central+Ave+Memphis+TN',
                      '926+E+McLemore+Ave+Memphis+TN']
     route = route_optimization_model(addresses)
-    
-    vehicles_route_address = encode_address(addresses, route)
+
