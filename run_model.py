@@ -102,10 +102,10 @@ def run_model(train= True, mode='MLP', scaler=False):
         utils.print_scatterplot_with_regression_line(y_test, y_pred_test)
         
         # Save model
-        pickle.dump(model, open(mode+'.sav', 'wb')) 
+        pickle.dump(model, open(mode+'_model.sav', 'wb')) 
     else:
         # Load the model 
-        model = pickle.load(open(mode+'.sav', 'rb')) 
+        model = pickle.load(open(mode+'_model.sav', 'rb')) 
 
     return model 
 

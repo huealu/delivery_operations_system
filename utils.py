@@ -65,3 +65,14 @@ def print_histplot(data):
     # Show the plot
     plt.show()
 
+
+def print_loss_history(history):
+    """Print the loss history."""
+    # Plot the loss history
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc='upper left')
+    plt.show()
