@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 import pandas as pd
+import os
 
 import utils, preprocessing_data
 
@@ -76,7 +77,12 @@ def run_dl_model(train=True):
         # Create the model
         model = create_model(X_train.shape[1])
     else:
-        model = tf.keras.models.load_model('DL_model.h5')
+        if not os.path.exists('DL_model.h5'):
+            print('Model not found. Retrain the model first!')
+            # Create the model
+            model = create_model(X_train.shape[1])
+        else:
+            model = tf.keras.models.load_model('DL_model.h5')
 
     model.summary()
 
@@ -104,7 +110,8 @@ def run_dl_model(train=True):
     utils.print_scatterplot_with_regression_line(y_test, y_pred_test)
 
     # Save the model
-    model.save('DL_model.h5')
+    if not train:
+        model.save('DL_model.h5')
 
     return model
 

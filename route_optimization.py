@@ -190,7 +190,7 @@ def encode_address(address, route):
 
 ######################## Create Route Optimization model ###########################
 
-def route_optimization_model(addresses=None):
+def route_optimization_model(addresses=None, number_vehicles=2):
     """Solves the Vehicle Routing Problem."""
 
     ################ Create data #################
@@ -211,7 +211,7 @@ def route_optimization_model(addresses=None):
     print(distance_matrix) # Print distance matrix 
 
     # Instantiate the data problem
-    data = create_data_model(distance_matrix)
+    data = create_data_model(distance_matrix, number_vehicles)
     
     ################# Create optimization model ###############################
 
@@ -267,5 +267,7 @@ if __name__ == "__main__":
                      '706+Union+Ave+Memphis+TN',
                      '3641+Central+Ave+Memphis+TN',
                      '926+E+McLemore+Ave+Memphis+TN']
-    route = route_optimization_model(addresses)
+    number_vehicles = 1
+    route = route_optimization_model(addresses, number_vehicles)
 
+ 
